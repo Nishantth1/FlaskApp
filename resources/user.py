@@ -8,6 +8,18 @@ parser.add_argument('email', type=str, required=True, help='Blank Email')
 parser.add_argument('password', type=str, required=True, help='Password blank.')
 
 class UserResource(Resource):
+    def get_list(self):
+            users = users_collection.find()
+            data = []
+            for user in users:
+                data.append({
+                    'id': str(user['_id']),
+                    'name': user['name'],
+                    'email': user['email'],
+                    'password': user['password']
+                })
+            return jsonify({'users': data})
+
     def get(self, user_id=None):
         db = get_db()
         if user_id:

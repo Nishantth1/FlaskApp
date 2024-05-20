@@ -1,0 +1,35 @@
+on:
+  push:
+    branches: [ master ]
+  repository_dispatch:
+    types: [trigger-build]
+
+name: Run Application
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Python environment
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m venv env
+        source env/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Build Flask application
+      run: |
+        source env/bin/activate
+        python app.py &
+        sleep 5 
+        curl -f http://localhost:8000
